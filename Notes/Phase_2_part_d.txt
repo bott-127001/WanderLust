@@ -1,0 +1,51 @@
+# Authentication vs Authorization :-
+    1. Authentication :- 
+        - Authentication is the process of verifying who someone is.
+        - signup and login
+    2. Authorization :-
+        - Authorization is the process of verifying what specific applications, files and data a user has access to.
+        - After authentication, access management and etc.
+
+# Storing Passwords :-
+    1. We never store passwords as it is. We Store their hashed form.
+
+# What is hashing :-
+    1. For every input, there is a fixed output.
+    2. They are one-way functions, we cant get input from output.
+    3. For a different input, there is a different output but of same length.
+    4. Small changes in input should bring large changes in output
+    5. Some well known hashing functions are :-
+        - bcrypt
+        - crc
+        - md5
+        - sha256
+
+# Salting :-
+    1. Salting is a technique to protect passwords stored in databases by adding a string of 32 or more characters and then hashing them.
+    2. So the flow is like Original_Password -> Salting(random string 32 or more characters) -> Hash function -> Hashed output stored in db.
+
+# Passport :- 
+    - It is a library that helps us with authentication.
+    - It provides various strategies to help authenticate user like by google, facebook, twitter etc.
+    - For more details visit - https://www.passportjs.org/packages
+    - We need to install  :-
+        1. npm install passport
+        2. npm install passport-local
+        3. npm install passport-mongoose :- 
+            - This package automatically adds a username, hash and salt field to store the username, the hashed password and the salt value.
+
+# Configuring Strategy :-
+    1. passport.initialize() :-
+        - A middleware that initializes passport.
+    2. passport.session() :-
+        - A web application needs the ability to identify users as they browse from page to page.
+        - This series of requests and response, each associated with the same user. is known as a session.
+    3. passport.use(new LocalStrategy(User.authenticate()));
+    4. Implementation:-
+        app.use(passport.initialize());
+        app.use(passport.session());
+        passport.use(new LocalStrategy(User.authenticate()));
+        passport.serializeUser(User.serializeUser());
+        passport.deserializeUser(User.deserializeUser());     
+    5. Serialize :- To serialize user means to store the information of the user into the session.
+    6. De-Serialize :- To De-Serialize a user means to unstore the information of the user from the session.       

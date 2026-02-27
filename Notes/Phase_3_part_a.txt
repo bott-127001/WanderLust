@@ -1,0 +1,96 @@
+# MVC :- 
+    - Model, View, Controller
+    - MVC is a design pattern for listings
+    - It is a way to implement code.
+    - M -> database
+    - V -> ejs files
+    - C -> controller files (main endpoint logic)
+
+# Router.route :-
+    - It returns an instance of a single route which you can then use to handle HTTP verbs with optional middleware.
+    - Use router.route to avoid duplicate routes and thus typing errors.
+    - Use/ Syntax :-
+        const router = express.Router()
+        router.route(path)
+
+# To upload image 
+    - We use a 3 step process :-
+        1. Take uploads from the user :-
+            - To do this we use a special attribute called enctype="" in form.
+        2. Use third party free storage service 
+        3. Finally get the url from the third party service and store it in our mongodb
+    
+    - Multer :- 
+        1. Multer is a node.js middleware for handling multipart/form-data, which is primarily used for uploading files.
+        2. Npm provides a package to use multer and cloudinary
+            npm i cloudinary multer-storage-cloudinary
+        3. Syntax :-
+            const multer = require('multer')
+            const upload = multer({ dest: 'uploads/' })
+            app.post('/upload', upload.single('avatar'), (req, res, next) => {};
+            app.post('/upload', upload.array('photos', 12), (req, res, next) => {});)
+
+# Env :-
+    - It is a special type of file which contain all your credentials and you can access them.
+    - Syntax :-
+        if(process.env.NODE_ENV !== 'production'){
+            require('dotenv').config()
+        }
+
+# Cloudinary :-
+    - It is a special tool that helps with media uploads storage.
+    - It is a third party server storage that helps us store the media(audio, video, pdf).
+    - It works well with multer to achieve this
+    - To use this we have to :-
+        1. Get our api key, api secret and storage destination.
+        2. create a cloudinary config file with basic setup code 
+            const cloudinary = require('cloudinary').v2;
+            const { CloudinaryStorage } = require('multer-storage-cloudinary');
+            const multer = require('multer');
+
+            cloudinary.config({
+                cloud_name: process.env.CLOUD_NAME,
+                api_key: process.env.CLOUD_API_KEY,
+                api_secret: process.env.CLOUD_API_SECRET
+            });
+
+            const storage = new CloudinaryStorage({
+                cloudinary: cloudinary,
+                params: {
+                folder: 'wanderlust_DEV',
+                allowedFormats: ['jpg', 'png', 'jpeg'],
+                }
+            });
+
+            module.exports = {
+                cloudinary,
+                storage
+            }
+        3. Require it and use it.
+        4. Cloudinary also provides us with various ways to handle image quality, scale and etc for preview and other usage.
+            To achieve this we can just add the transformations we ned after /uploads in the cloudinary link (image url)
+
+# Getting started with Maps
+    1. We will be using mapbox for maps
+    2. Mapbox GL JS library 
+        - This is what we are using 
+        - It is a client-side Javascript library for building web maos and web applications with mapbox. 
+        - It is used to display maps in web browser or client, user interactivity and customzations
+
+# Geocoding :-
+    1. Geocoding is the process of converting addresses(like a street address) into geographic coordinates (like latitude and longitude).
+    2. Which you can use to place markers on a map, or position the map.
+    3. To achieve this we can use mapbox's geocoding api/ sdk (github wr ahe).
+        - We need to install the sdk 
+            npm i @mapbox/mapbox-sdk
+        - There are two types of geocoding :-
+            Forward :- converts location text to coordinates.
+            Backward/ Reverse :- converts coordinates into place names
+    4. Storing coordinates :-
+        - GeoJSON :- 
+            The most simple structure in GeoJSON is a point.
+            Example ,
+                {
+                    type: "Point", coordinates: {-122.5, 37.7}
+                }
+            It also provides us with inbuilt functionalities

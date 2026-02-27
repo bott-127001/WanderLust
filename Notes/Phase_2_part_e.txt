@@ -1,0 +1,51 @@
+# Logout :-
+    - Passport package provides us a special logout function which we can use to implement logout functionalities.
+    - Syntax :-
+        req.logout((err) = > {
+            if(err) {
+                return next(err);
+            }
+            res.redirect('/');
+        });
+
+# Login After Signup :-
+    - Passpost package also provide a login() which we can call after signup to automatically login after user signup.
+    - Syntax  :-
+        req.login(registeredUser, (err) => { 
+            if (err) {
+                return next(err); 
+            }
+            req.flash("success", "Welcome to Wanderlust");
+            res.redirect('/listings');
+        }) catch(e) {
+        req.flash("error", e.message);
+        res.redirect('/signup');
+    }
+
+# Post login page :-
+    - To redirect to the page from where user was redirected to login or signup passport provides a variable called originalUrl.
+    - SO this helps us to find from where user was redirected to login/singup so we can take him back there.
+    - it is present in the req object.
+    - Syntax  :-
+        req.session.originalUrl = req.originalUrl;
+        res.redirect();
+    - Now Since passport resets the req object once the middle ware execution is done we need to save the returnurl to locals.
+    - Syntax :-
+        module.exports.saveRedirectUrl = (req, res, next) => {
+            if(req.session.returnUrl){
+                res.locals.redirectUrl = req.session.returnUrl;
+            }
+            next();
+        }
+    - Then we add the saveredirectUrl to the paramters where the authentication is being done by passport
+
+# listing owner :-
+    - To provide authorization we add the owner for each listing in db and in show.ejs file.
+    - we used map((obj) => {...obj, owner: "id"}) to populate data in db.
+    - Then just like reviews we used populate function to get username from the db object.
+
+# Nested populate :- 
+    - In this we can use populate() to display multiple values by creating an object of values.
+    - Means we can just use them like {key: value, key: value}. bass evdach
+    - Syntax :-
+        .populate({path:'reviews', populate: {path: 'author'}});

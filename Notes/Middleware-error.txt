@@ -1,0 +1,161 @@
+# Middleware :-
+    - It is an intermedediary.
+    - Request -> Middleware -> Response
+    - Middleware in express are functions that come into play after the server recieves the request and before the response is sent.
+    - Common middleware functions :-
+        1. methodOverride
+        2. bodyParser
+        3. express.static
+        4. express.urlencoded
+    - Middlewares can access (req, res) object.
+    - Chaining is possible in middleware.
+    - we use app.use() to use or create a middle ware
+    - when a path is specified the middleware works only for that path.
+      If not specified then its used for all paths
+    - They even work for undefined paths.
+
+# What middlewares do?
+- Middleware functions can perform the following tasks :-
+    1. Execute any code.
+    2. Make changes to the request and the response objects.
+    3. End the request-response cycle.
+    4. Call the next middleware function in the stack.
+
+# Types of middlewares are  :-
+    1. Error-handling 
+    2. Routing
+    3. Application-level
+    4. Built-in
+    5. Third-party
+
+# Using next :-
+    - The next middleware function is commonly denoted by a variable named next.
+    - if the current middleware function does not end the request-response cycle, it must call next() to pass control to the next middleware function.
+    - Example :-
+        app.use((req, res, next) => {
+            console.log('time:', Date.now())
+            next()
+        })
+
+# Logger Middleware :-
+- Logger refers to such a functionality in middleware that helps prpogram to log.
+- In other words, printing usefull information in terminal.
+- It contains information like method(get, post, delete..), path, responseTime, hostname
+
+# Handling Errors :-
+    - Express Default Error handler.
+    - Error handling middlewares are used for handling errors before handling it javascript handler.
+    - These are implemented using app.use(err, req, res, next).
+    - The (err) contains the error that can be passed as argument in the next(err) for handling error to the next erro handling middleware.
+
+# Error class :-
+    - These are used for error handling in a user defined way.
+    - Here we create separate error class for each error we want to display for certain action.
+    - It extends Error class of the prototype object.
+    - In this we can set various things for the error like status(500, 404,301), message and etc.
+    - Example :-
+        class ExpressError extends Error {
+            constructor(status, message) {
+                super();
+                this.message = message;
+                this.status = 404;
+            }
+        }
+
+# Handling Async Errors :-
+    - Create ExpressError.js file :-
+        class ExpressError extends Error {
+            constructor(status, message){
+                super();
+                this.status = status;
+                this.message = message;
+            }
+        }
+
+        module.exports = ExpressError;
+    - Require it in index.js
+    - Then Define the middleware :-
+        app.use((err, req, res, next) => {
+            let {status=500, message= "Some Error occured} = err;
+            res.status(status).send(message);
+        });
+    - Then throw it from the app.get() path.
+    - Example :-
+        app.get('/chat/:id', (req, res, next) => {
+            let {id} = req.params;
+            let chat = await Chat.findById(id);
+            if(!chat){
+                next(throw new ExpressError(404, "Chat not found"));
+            }
+            res.send(chat);
+            });
+    - For handling errors in async functions we need to throw errors as parameter in next()
+    - Handling Validation errors :- To handle these errors we need to use try catch block. and use next in catch block with err as parameter to next(err).
+        - Example :-
+            app.get('/chat/:id', (req, res, next) => {
+                try{
+                    let {id} = req.params;
+                    let chat = await Chat.findById(id);
+                    if(!chat){
+                        next(throw new ExpressError(404, "Chat not found"));
+                    }
+                    res.send(chat);
+                } catch(err){
+                    next(err);
+                }
+            });
+# wrapAsync :- 
+- It is a better way to reduce code size and not use try-catch.
+- It is a function that returns function. Its a function with function as argument and function as return.
+- Syntax :-
+    function wrapAsync(fn) {
+        return function(req, res, next) {
+            fn(req, res, next).catch(next);
+        }
+    }
+- Example :-
+    function wrapAsync(fn) {
+        return function(req, res, next) {
+            fn(req, res, next).catch(next) => next(err);
+        }
+    }
+
+   app.get('/chat/:id', wrapAsync( async (req, res, next) => {
+            let {id} = req.params;
+            let chat = await Chat.findById(id);
+            if(!chat){
+                next(throw new ExpressError(404, "Chat not found"));
+            }
+            res.send(chat);
+    }));
+
+# Mongoose Error :- Each error consists a name like validationerror, mongoose error, syntax error. So we can handle errrors according o thier names.
+    const handleValidationErr = (err) =>{
+        console.log("Validation Error");
+        return err;
+    };
+
+    app.use((err, req, res, next) => {
+        console.log(err.name);
+        if(err.name === 'ValidationError'){
+            err = handleValidationErr(err);
+        }
+        next(err);
+    })
+
+# Form Valiations :-
+    - When we enter data in the form, the browser and/or the web server will check to see that the data is in the correct format and within the constraints set by the application.
+    - There are two types of validations:- 
+        1. client side validation :- handles data going from frontend to backend.
+        2. server side validation :- handles other errors like 404 page not fount and wrong requests.
+
+# Joi Package :- 
+    - It is used to validate the schema checking each and every field just like in the frontend we use required sameway this is for backend.
+    - It check for each field required to be present in the request body.
+    - It is used for schema validation
+    - Here we define a schema for the server(not database) so it can use this schema to compare with database schema to validate if everything is right.
+
+# $pull Operator
+    - It removes from an existing array all instances of a value or values that match a specified condition.
+
+

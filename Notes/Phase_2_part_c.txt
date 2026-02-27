@@ -1,0 +1,63 @@
+# Express Router :-
+    - Express Routers are a way to organize your express application such that our primary app.js file does not become bloated.
+    - Syntax :-
+        const router = express.Router(); // Creates new router object
+
+# Cookies:-
+    1. HTTP cookies are small blocks of data created by a web server while a user is browsing a website and placed on the user's computer or other device by the user's web browser.
+    2. It is always stored in name value pair
+    3. It is used for :-
+        1. personlization
+        2. session management
+        3. better user experience
+        4. security :- to keep user loggedin persistently.
+    4. To parse and read cookies :-
+        - We use a middleware named cookie parser.
+        - syntax :-
+            npm install cookie-parser
+            const cookieParser = require('cookie-parser');
+            app.use(cookieParser());
+            console.log(req.cookies);
+    5. Signed Cookies :-
+        - Signed cookies are like a seal for cookie to maintain integrity.
+        - Syntax :-
+            app.use(cookieParser('secret'));
+            app.get('/getsignedcookie', (req, res) => {
+                res.cookie("color,"red", {signed: true});
+                res.send("done!");
+            });
+
+            app.get("/verify", (req, res) => {
+                res.send(req.signedCookies);
+            });
+
+<-----------------------------------------------------------------------------!--------------------------------------------------------------------------------------------->
+
+Phase 2 (Part c)
+
+# What is state?
+    1. Stateful Protocol :- 
+        - Stateful Protocol require server to save the status and session information.
+        - eg ftp
+    2. Stateless Protocol :-
+        - Stateless Protocol does not require the server to retain the server information or session information.
+        - eg http
+
+# Express Sessions :- 
+    - An attempt to make our session stateful.
+    - It creates sessions for each user to store information (like cart).
+
+# Connect-flash :-
+    1. It is a npm package to flash an alert
+    2. The flash is a special area of the session used for storing messages.
+    3. Messages are written to the flash and cleared after being displayed to the user.
+    4. They appear once triggered through some event not after refreshing.
+    5. Syntax :-
+        npm install connect-flash
+        app.use(flash());
+        req.flash("key", "value")
+        res.render('page.ejs', {name: req.session.name , message: req.flash('success')});
+        // To render (display it actually on screen we need to pass it as paramter to res.render('ejs file name', {message: req.flash('key')}));
+    6. To better use flash :- 
+        - We can use res.locals.
+        - Locals helps us to set variables accessible in templates rendered with res.render. 
