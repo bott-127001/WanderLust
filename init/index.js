@@ -15,7 +15,7 @@ async function main() {
 
 const initDB = async () => {
     await listing.deleteMany({});
-    initdata.data = initdata.data.map((obj) => ({...obj, owner:"699ec8704003f2a0be6174b0"}));
+    initdata.data = initdata.data.map((obj) => ({...obj, owner:"69e901fefe107d65a273b9ca", geometry: { type: "Point", coordinates: [0, 0] }}));
     await listing.insertMany(initdata.data);
     console.log("Database initialized");
 }

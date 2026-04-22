@@ -15,13 +15,13 @@ router.route('/')
 .get(wrapAsync(listingcontroller.index))
 .post(isLoggedin, validateListing, upload.single("listing[image]"), wrapAsync(listingcontroller.createListing));
 
+// New 
+router.get('/new',isLoggedin, listingcontroller.renderNewForm);
+
 router.route('/:id')
 .get(wrapAsync(listingcontroller.showListing))
 .put(isLoggedin, isOwner, upload.single("listing[image]"), validateListing, wrapAsync(listingcontroller.updateListing))
 .delete(isLoggedin, isOwner, wrapAsync(listingcontroller.destroyListing));
-
-// New 
-router.get('/new',isLoggedin, listingcontroller.renderNewForm);
 
 //Edit 
 router.get("/:id/edit", isLoggedin, isOwner, wrapAsync(listingcontroller.renderEditForm));

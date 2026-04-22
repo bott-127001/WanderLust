@@ -29,7 +29,7 @@ app.use(express.json());
 app.engine('ejs', ejsMate);
 app.use(methodoverride('_method'));
 
-const store = MongoStore.create({
+const store = MongoStore.default.create({
     mongoUrl: mongo_uri,
     secret: 'secret',
     touchAfter: 24 * 60 * 60,
