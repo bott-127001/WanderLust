@@ -7,7 +7,7 @@ const path = require('path');
 const methodoverride = require('method-override');
 const ejsMate = require('ejs-mate');
 const ExpressError = require('./utils/ExpressError');
-const mongo_uri = 'mongodb://localhost:27017/wanderlust'
+const mongo_uri = process.env.ATLASDB_URL || 'mongodb://localhost:27017/wanderlust'
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const flash = require('connect-flash');
@@ -29,9 +29,11 @@ app.use(express.json());
 app.engine('ejs', ejsMate);
 app.use(methodoverride('_method'));
 
+const secret = process.env.SECRET || 'mysuperserioussecret';
+
 const store = MongoStore.default.create({
     mongoUrl: mongo_uri,
-    secret: 'secret',
+    secret: secret,
     touchAfter: 24 * 60 * 60,
 })
 
@@ -42,7 +44,7 @@ store.on('error', () => {
 
 app.use(session({
     store: store,
-    secret: 'secret',
+    secret: secret,
     resave: false,
     saveUninitialized: true,
     cookie: {
@@ -106,6 +108,7 @@ app.use((err, req, res, next) =>{
 })
 
 
-app.listen(3000, () => {
-    console.log("http://localhost:3000");
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
 });
