@@ -1,7 +1,8 @@
+require('dotenv').config({path: "../.env"});
 const mongoose = require('mongoose');
 const initdata = require('./data');
 const listing = require('../models/listing');
-const mongo_uri = "mongodb://localhost:27017/wanderlust";
+const mongo_uri = process.env.ATLASDB_URL || "mongodb://localhost:27017/wanderlust";
 
 main().then(() => {
     console.log("Connected to MongoDB");

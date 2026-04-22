@@ -81,9 +81,9 @@ async function main() {
     await mongoose.connect(mongo_uri);
 }
 
-// app.get("/", (req, res) => {
-//     res.render('./listings/home.ejs');
-// });
+app.get("/", (req, res) => {
+    res.redirect("/listings");
+});
 
 app.get('/demouser', async (req, res) => {
     let fakeUser = new User({
